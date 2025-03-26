@@ -1,0 +1,18 @@
+# Python bytecode files
+__pycache__/r
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+env/
+*.env
+
+# Django-related files
+*.log
+*.pot
+*.pyc
+
+# Media and static files (optional, if these are generated dynamically)
+media/
+staticfiles/
