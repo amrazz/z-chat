@@ -153,6 +153,7 @@ export const setupWebRTC = async (localVideoRef, remoteVideoRef, socket, rtcMess
     try {
         console.log("Setting up WebRTC with stored offer:", rtcMessage);
         const stream = await getLocalStream();
+        console.log(`this is the stream ${stream}`)
         if (localVideoRef.current) localVideoRef.current.srcObject = stream;
 
         const pc = createPeerConnection();
