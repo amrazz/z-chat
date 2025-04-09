@@ -9,3 +9,6 @@ environs
 django-environ
 psycopg2-binary
 python-dotenv
+django-channels
+daphne
+pillow
