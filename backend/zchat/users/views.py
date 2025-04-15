@@ -13,7 +13,6 @@ from .serializers import (
     UserSerializer,
 )
 
-
 # Create your views here.
 
 
@@ -85,27 +84,29 @@ class UserMessageView(APIView):
         try:
             receiver = User.objects.get(id=user_id)
             messages = (
-                UserMessage.objects.filter(sender=request.user, receiver=receiver)
-                | UserMessage.objects.filter(sender=receiver, receiver=request.user)
+                UserMessage.objects.filter(sender=request.user, receiver=receiver) |
+                UserMessage.objects.filter(sender=receiver, receiver=request.user)
             ).order_by("timestamp")
             serializer = UserMessageSerializer(messages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response(
-                {"error": "User not found."}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class SendMessageView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        if not request.data.get("message") or not request.data.get("message").strip():
+            return Response({"error": "Message cannot be empty."}, status=status.HTTP_400_BAD_REQUEST)
         data = {
             "receiver_id": request.data.get("receiver_id"),
             "message": request.data.get("message"),
             "sender": request.user,
         }
-        serializer = UserMessageSerializer(data=data, context={'request' : request})
+        serializer = UserMessageSerializer(data=data, context={'request': request})
         if serializer.is_valid():
             serializer.save(sender=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
